@@ -1,0 +1,20 @@
+cmake_minimum_required(VERSION 2.8)
+
+project(d3util) # Tools Util
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14") 
+
+file(GLOB CPP_FILES d3util/*.cpp)
+file(GLOB HPP_FILES d3util/*.h)
+
+add_library(${PROJECT_NAME} ${CPP_FILES} ${HPP_FILES})
+target_link_libraries(${PROJECT_NAME} dl)
+target_include_directories(${PROJECT_NAME} PUBLIC ./)
+
+set(Boost_USE_STATIC_LIBS ON)
+find_package(Boost REQUIRED COMPONENTS system filesystem log stacktrace_addr2line)
+target_link_libraries(${PROJECT_NAME} dl ${Boost_LIBRARIES} )
+
+install(TARGETS ${PROJECT_NAME} DESTINATION lib)
+install(FILES ${HPP_FILES} DESTINATION include/${PROJECT_NAME})
+
