@@ -21,31 +21,6 @@
 #define  LOG_ERROR   BOOST_LOG_TRIVIAL(error) << BOOST_CURRENT_FUNCTION << ": "
 #define  LOG_FATAL   BOOST_LOG_TRIVIAL(fatal) << BOOST_CURRENT_FUNCTION << ": "
 
-inline void init_logger(const std::string& prefixFile, boost::log::trivial::severity_level severity=boost::log::trivial::severity_level::info)
-{
-    auto format = boost::log::keywords::format = (
-        boost::log::expressions::stream
-        << boost::log::expressions::format_date_time< boost::posix_time::ptime >("TimeStamp", "%Y-%m-%d %H:%M:%S")
-        << "[" << boost::log::trivial::severity
-        << "] " << boost::log::expressions::smessage
-    );
-    boost::log::add_console_log(
-        std::clog,
-        boost::log::keywords::auto_flush = true,
-        format
-    );
-    boost::log::add_file_log
-    (
-        boost::log::keywords::auto_flush = true,
-        boost::log::keywords::file_name = prefixFile+"_%N.log",
-        boost::log::keywords::rotation_size = 10 * 1024,
-        boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0),
-        format
-    );
-    boost::log::core::get()->set_filter
-    (
-        boost::log::trivial::severity >= boost::log::trivial::trace
-    );
-}
+void init_logger(const std::string& prefixFile, boost::log::trivial::severity_level severity=boost::log::trivial::severity_level::info);
 
 #endif // LOGGER_H
