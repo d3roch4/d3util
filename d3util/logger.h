@@ -4,15 +4,7 @@
 //////////// LOGGER BOOST //////////////////
 
 #include <boost/log/core/core.hpp>
-#include <boost/log/attributes/attribute_value_set.hpp>
 #include <boost/log/trivial.hpp>
-#include <boost/log/sources/severity_logger.hpp>
-#include <boost/log/utility/setup/file.hpp>
-#include <boost/log/utility/setup/console.hpp>
-#include <boost/log/utility/setup/common_attributes.hpp>
-#include <boost/log/expressions.hpp>
-#include <boost/log/support/date_time.hpp>
-#include <boost/log/utility/setup/console.hpp>
 
 #define  LOG_TRACE   BOOST_LOG_TRIVIAL(trace) << BOOST_CURRENT_FUNCTION << ": "
 #define  LOG_DEBUG   BOOST_LOG_TRIVIAL(debug) << BOOST_CURRENT_FUNCTION << ": "
