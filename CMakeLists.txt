@@ -7,11 +7,13 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 file(GLOB CPP_FILES d3util/*.cpp)
 file(GLOB HPP_FILES d3util/*.h)
 
+set(Boost_USE_STATIC_LIBS ON)
+add_compile_definitions(BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED=1)
+find_package(Boost REQUIRED COMPONENTS system filesystem log stacktrace_basic)
+include_directories(src ${Boost_INCLUDE_DIRS})
+
 add_library(${PROJECT_NAME} ${CPP_FILES} ${HPP_FILES})
 target_include_directories(${PROJECT_NAME} PUBLIC ./)
-
-set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost REQUIRED COMPONENTS system filesystem log stacktrace_addr2line)
 target_link_libraries(${PROJECT_NAME} dl ${Boost_LIBRARIES} )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION lib)

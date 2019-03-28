@@ -48,20 +48,30 @@ struct converter_to_json
         get( f.get(), f.name() );
     }
 
+    #define IS_ULONG (std::is_same<const long, T>::value || std::is_same<const unsigned long, T>::value)
+
     template <class T>
-    auto get(T& val, const char* name) noexcept -> std::enable_if_t<std::is_convertible<T, datetime>::value>
+    auto get(T& val, const char* name) noexcept -> std::enable_if_t<(std::is_convertible<T, datetime>::value || std::is_enum<T>::value)>
     {
         json[name] = to_string(val);
     }
 
     template <class T, class Dummy = void>
-    auto get(T& val, const char* name) noexcept -> std::enable_if_t<is_simple_type<T>::value>
+    auto get(T& val, const char* name) noexcept -> std::enable_if_t<IS_ULONG>
+    {
+        json[name] = (Json::UInt64) val;
+    }
+
+    template <class T, class Dummy = void>
+    auto get(T& val, const char* name) noexcept -> std::enable_if_t<(is_simple_type<T>::value && !std::is_enum<T>::value && !IS_ULONG)>
     {
         json[name] = val;
     }
 
     template <class T, class Dummy = void>
-    auto get(T& val, const char* name) noexcept -> std::enable_if_t<!is_simple_type<T>::value && !std::is_convertible<T, datetime>::value>
+    auto get(T& val, const char* name) noexcept -> std::enable_if_t<!is_simple_type<T>::value 
+    && !std::is_convertible<T, datetime>::value 
+    && !std::is_enum<T>::value>
     {
         converter_to_json tj;
         reflector::visit_each(val, tj);
