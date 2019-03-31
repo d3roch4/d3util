@@ -89,10 +89,9 @@ Json::Value to_json(const Entity& entity)
 
 struct from_json
 {
-    const Json::Value& json;
-    from_json(const Json::Value& json) : json(json) {}
-    from_json(const std::string& str) : json(to_json(str)) {}
-
+    Json::Value& json;
+    from_json(const Json::Value& json) : json(const_cast<Json::Value&>(json)) {}
+    
 //    template<class Field>
 //    void value_to_field(Json::Value v, Field f){}
     void value_to_field(Json::Value v, std::string &&f);
