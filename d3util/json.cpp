@@ -69,3 +69,9 @@ void from_json::value_to_field(Json::Value v, datetime &&f)
 {
     f = stodt(v.asString());
 }
+
+void from_json::value_to_field(Json::Value v, bool &&f)
+{
+    if(v.isBool())
+        f = v.asBool();
+}

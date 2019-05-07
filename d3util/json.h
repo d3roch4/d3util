@@ -106,6 +106,7 @@ struct from_json
     void value_to_field(Json::Value v, unsigned long &&f);
     void value_to_field(Json::Value v, unsigned long long &&f);
     void value_to_field(Json::Value v, datetime &&f);
+    void value_to_field(Json::Value v, bool &&f);
 
     template <class T, class Dummy = void>
     auto get(T& val, const char* name) noexcept -> std::enable_if_t<std::is_enum<T>::value>
