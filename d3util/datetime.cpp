@@ -13,8 +13,10 @@ std::string to_string(const datetime & dt, const char* format)
 datetime stodt(const std::string &dtstr, const char *format)
 {
     struct std::tm tm{};
-    std::istringstream ss(dtstr);
-    ss >> std::get_time(&tm, format); // or just %T in this case
+    if(dtstr.size()){
+        std::istringstream ss(dtstr);
+        ss >> std::get_time(&tm, format); // or just %T in this case
+    }
     std::time_t time = mktime(&tm);
     return std::chrono::system_clock::from_time_t(time);
 }
