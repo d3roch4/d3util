@@ -114,6 +114,10 @@ struct from_json
         JSONObject value = json.get(name, Json::Value::null);
         if(value.isIntegral())
             val = static_cast<T>(value.asInt());
+        else if(value.isString()){
+            std::stringstream ss{value.asString()};
+            ss >> val;
+        }
     }
 
     template <class T, class Dummy = void>
