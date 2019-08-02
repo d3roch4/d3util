@@ -9,7 +9,7 @@ file(GLOB HPP_FILES d3util/*.h)
 
 set(Boost_USE_STATIC_LIBS ON)
 add_compile_definitions(BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED=1)
-find_package(Boost REQUIRED COMPONENTS system filesystem log stacktrace_basic)
+find_package(Boost COMPONENTS system filesystem log log_setup stacktrace_basic REQUIRED)
 include_directories(src ${Boost_INCLUDE_DIRS})
 
 add_library(${PROJECT_NAME} ${CPP_FILES} ${HPP_FILES})
