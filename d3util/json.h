@@ -10,6 +10,12 @@
 
 using JSONObject = Json::Value;
 
+struct JSONArray : public Json::Value
+{
+    JSONArray() : Json::Value(Json::arrayValue){}
+};
+
+
 inline void to_json(const std::string& strJson, Json::Value& json)
 {
     Json::CharReaderBuilder builder;

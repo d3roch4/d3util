@@ -1,5 +1,6 @@
 #include <d3util/stacktrace.h>
 #include <boost/filesystem.hpp>
+#define DBOOST_STACKTRACE_USE_ADDR2LINE
 
 void backtrace_signal_handler(int signum) {
     ::signal(signum, SIG_DFL);

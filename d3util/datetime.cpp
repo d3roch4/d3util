@@ -29,3 +29,9 @@ std::istream &operator >>(std::istream &strean, datetime &dt)
     dt = std::chrono::system_clock::from_time_t(time);
     return strean;
 }
+
+std::ostream &operator >>(std::ostream &strean, datetime &dt)
+{
+    strean << to_string(dt);
+    return strean;
+}
