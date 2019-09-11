@@ -13,6 +13,8 @@ using JSONObject = Json::Value;
 struct JSONArray : public Json::Value
 {
     JSONArray() : Json::Value(Json::arrayValue){}
+    JSONArray(Json::Value&& outro) : Json::Value(outro){}
+    JSONArray(const Json::Value& outro) : Json::Value(outro){}
 };
 
 
