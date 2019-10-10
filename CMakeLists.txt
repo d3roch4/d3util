@@ -9,10 +9,15 @@ file(GLOB HPP_FILES d3util/*.h)
 
 set(Boost_USE_STATIC_LIBS ON)
 add_compile_definitions(BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED=1)
-find_package(Boost COMPONENTS system filesystem log log_setup stacktrace_basic REQUIRED)
+if (WIN32)
+    set(STACKTRACE stacktrace_windbg)
+else()
+    set(STACKTRACE stacktrace_addr2line)
+endif ()
+find_package(Boost COMPONENTS system filesystem log log_setup ${STACKTRACE} REQUIRED)
 include_directories(src ${Boost_INCLUDE_DIRS})
 
-add_library(${PROJECT_NAME} ${CPP_FILES} ${HPP_FILES})
+add_library(${PROJECT_NAME} ${CPP_FILES} ${HPP_FILES}) 
 target_include_directories(${PROJECT_NAME} PUBLIC ./)
 target_link_libraries(${PROJECT_NAME} dl ${Boost_LIBRARIES} )
 
@@ -22,7 +27,7 @@ install(FILES ${HPP_FILES} DESTINATION include/${PROJECT_NAME})
 include(jsoncpp.cmake)
 
 if(NOT TARGET mor)
-    add_subdirectory(../mor mor)
+    add_subdirectory(deps/mor mor)
 endif()
 target_link_libraries(${PROJECT_NAME} mor)
 
