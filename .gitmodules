@@ -4,6 +4,6 @@
 [submodule "deps/boost-cmake"]
 	path = deps/boost-cmake
 	url = https://github.com/Orphis/boost-cmake
-[submodule "deps/jsoncapp"]
-	path = deps/jsoncapp
+[submodule "deps/jsoncpp"]
+	path = deps/jsoncpp
 	url = https://github.com/open-source-parsers/jsoncpp
