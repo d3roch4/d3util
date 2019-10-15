@@ -24,12 +24,15 @@ target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} )
 install(TARGETS ${PROJECT_NAME} DESTINATION lib)
 install(FILES ${HPP_FILES} DESTINATION include/${PROJECT_NAME})
 
-include(jsoncpp.cmake)
-
 if(NOT TARGET mor)
     add_subdirectory(deps/mor mor)
 endif()
 target_link_libraries(${PROJECT_NAME} mor)
+
+if(NOT TARGET jsoncpp_lib)
+    add_subdirectory(deps/jsoncpp jsoncpp)
+endif()
+target_link_libraries(${PROJECT_NAME} jsoncpp_lib)
 
 option(BUILD_EXAMPLE "Build example code" OFF)
 if(BUILD_EXAMPLE)
