@@ -1,6 +1,7 @@
 #ifndef JSOND3Util_H
 #define JSOND3Util_H
 
+#include <type_traits>
 #include <mor/mor.h>
 #include <json/json.h>
 #include <memory>
