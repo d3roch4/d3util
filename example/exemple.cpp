@@ -5,7 +5,7 @@ using namespace std;
 
 struct print_person
 {
-    template<class FieldData, class Annotations>
+    /*template<class FieldData, class Annotations>
     auto operator()(FieldData f, Annotations a, int) noexcept -> std::enable_if_t<!std::is_convertible<typename FieldData::type, datetime>::value>
     {
         std::cout << std::endl << f.name() << "=" << f.get() ;
@@ -15,6 +15,12 @@ struct print_person
     auto operator()(FieldData f, Annotations a, int) noexcept -> std::enable_if_t<std::is_convertible<typename FieldData::type, datetime>::value>
     {
         std::cout << std::endl << f.name() << "=" << to_string(f.get()) ;
+    }*/
+    
+    template<class FieldData, class Annotations>
+    void operator()(FieldData f, Annotations a, int qtd)
+    {
+        std::cout << std::endl << f.name() << "=" << f.get() ;
     }
 };
 
@@ -52,7 +58,8 @@ int main()
     p.status = Person::Status::offline;
 
     Json::Value json = to_json<Person>(p);
-    Person copy = from_json(json);
-
-    reflector::visit_each(copy, print_person{});
+    //Person copy = from_json(json);
+    
+    print_person pp{};
+    reflector::visit_each(copy, pp);
 }
