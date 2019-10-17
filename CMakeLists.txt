@@ -15,7 +15,7 @@ else()
     set(STACKTRACE stacktrace_addr2line)
 endif ()
 set(FETCHCONTENT_SOURCE_DIR_BOOST "C:/Users/andre/workspace/teleentrega-servidor/build/_deps/boost-src")
-add_subdirectory(deps/boost-cmake)
+#add_subdirectory(deps/boost-cmake)
 find_package(Boost COMPONENTS system filesystem log log_setup ${STACKTRACE} REQUIRED)
 include_directories(src ${Boost_INCLUDE_DIRS})
 
