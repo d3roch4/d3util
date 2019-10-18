@@ -20,7 +20,7 @@ include_directories(src ${Boost_INCLUDE_DIRS})
 
 add_library(${PROJECT_NAME} ${CPP_FILES} ${HPP_FILES}) 
 target_include_directories(${PROJECT_NAME} PUBLIC ./)
-target_link_libraries(${PROJECT_NAME} PUBLIC Boost::filesystem Boost::log Boost::log_setup Boost::${STACKTRACE} )
+target_link_libraries(${PROJECT_NAME} PUBLIC ${Boost_LIBRARIES} )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION lib)
 install(FILES ${HPP_FILES} DESTINATION include/${PROJECT_NAME})
