@@ -13,9 +13,13 @@ if (WIN32)
 else()
     set(STACKTRACE stacktrace_addr2line)
 endif ()
-set(FETCHCONTENT_SOURCE_DIR_BOOST "/Users/andre/workspace/boost-src/")
-add_subdirectory(deps/boost-cmake)
-#find_package(Boost COMPONENTS system filesystem log log_setup ${STACKTRACE} REQUIRED)
+
+find_package(Boost COMPONENTS system filesystem log log_setup ${STACKTRACE})
+if(NOT Boost_FOUND)
+    add_subdirectory(deps/boost-cmake)
+    #set(FETCHCONTENT_SOURCE_DIR_BOOST "/Users/andre/workspace/boost-src/")
+endif()
+
 include_directories(src ${Boost_INCLUDE_DIRS})
 
 add_library(${PROJECT_NAME} ${CPP_FILES} ${HPP_FILES}) 
