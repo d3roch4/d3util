@@ -98,8 +98,12 @@ Json::Value to_json(const Entity& entity)
 
 struct from_json
 {
-    Json::Value& json;
-    from_json(const Json::Value& json) : json(const_cast<Json::Value&>(json)) {}
+    Json::Value* json_;
+    bool dealoc_ = false;
+
+    from_json(const Json::Value& json);
+    from_json(const std::string& string);
+    ~from_json();
     
 //    template<class Field>
 //    void value_to_field(Json::Value v, Field f){}
@@ -120,7 +124,7 @@ struct from_json
     template <class T, class Dummy = void>
     auto get(T& val, const char* name) noexcept -> std::enable_if_t<std::is_enum<T>::value>
     {
-        JSONObject value = json.get(name, Json::Value::null);
+        JSONObject value = json_->get(name, Json::Value::null);
         if(value.isIntegral())
             val = static_cast<T>(value.asInt());
         else if(value.isString()){
@@ -133,7 +137,7 @@ struct from_json
     auto get(T& val, const char* name) noexcept -> std::enable_if_t<is_simple_or_datatime_type<T>::value
                                                             && !std::is_enum<T>::value>
     {
-        JSONObject value = json.get(name, Json::Value::null);
+        JSONObject value = json_->get(name, Json::Value::null);
         if(value != Json::Value::null)
             value_to_field(value , std::move(val));
     }
@@ -141,7 +145,7 @@ struct from_json
     template <class T, class Dummy = void>
     auto get(T& val, const char* name) noexcept -> std::enable_if_t<!is_simple_or_datatime_type<T>::value >
     {
-        JSONObject obj = json[name];
+        JSONObject obj = (*json_)[name];
         if(obj.isObject()){
             from_json fj(obj);
             reflector::visit_each(val, fj);

@@ -1,5 +1,22 @@
 #include "json.h"
 
+from_json::from_json(const Json::Value &json) : json_((JSONObject*)&json)
+{
+}
+
+from_json::from_json(const std::string& str) : json_(nullptr)
+{
+    json_ = new JSONObject();
+    dealoc_ = true;
+    to_json(str, *json_);
+}
+
+from_json::~from_json()
+{
+    if(dealoc_)
+        delete json_;
+}
+
 void from_json::value_to_field(Json::Value v, std::string &&f)
 {
     f.assign(v.asString());
