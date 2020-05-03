@@ -9,6 +9,9 @@
 #include <d3util/stacktrace.h>
 #include <d3util/datetime.h>
 
+
+struct JsonIgnoreWrite{};
+
 using JSONObject = Json::Value;
 
 struct JSONArray : public Json::Value
@@ -57,7 +60,7 @@ struct converter_to_json
         get( f.get(), f.name() );
     }
 
-    #define IS_ULONG (std::is_same<const long, T>::value || std::is_same<const unsigned long, T>::value)
+    #define IS_ULONG (std::is_same<const long, T>::value || std::is_same<const unsigned long, T>::value || std::is_same<const unsigned long long, T>::value)
 
     template <class T>
     auto get(T& val, const char* name) noexcept -> std::enable_if_t<(std::is_convertible<T, datetime>::value || std::is_enum<T>::value)>
@@ -155,8 +158,10 @@ struct from_json
     template<class FieldData, class Annotations>
     void operator()(FieldData f, Annotations e, int lenght)
     {
-        auto& val = f.get();
-        get( val, f.name() );
+        if( ! (JsonIgnoreWrite*) Annotations::get_field(f.name()) ){
+            auto& val = f.get();
+            get( val, f.name() );
+        }
     }
 
     template <typename T>
