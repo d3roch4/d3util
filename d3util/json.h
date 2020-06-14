@@ -12,13 +12,28 @@
 
 struct JsonIgnoreWrite{};
 
-using JSONObject = Json::Value;
-
-struct JSONArray : public Json::Value
+struct JSONObject : public Json::Value
 {
-    JSONArray() : Json::Value(Json::arrayValue){}
-    JSONArray(Json::Value&& outro) : Json::Value(outro){}
-    JSONArray(const Json::Value& outro) : Json::Value(outro){}
+    JSONObject(const Json::Value& value);
+    JSONObject(Json::Value&& value);
+    JSONObject(Json::ValueType type = Json::nullValue);
+    virtual ~JSONObject() = default;
+
+    JSONObject& operator =(const Json::Value& value);
+    JSONObject& operator =(Json::Value&& value);
+
+    operator std::string ();
+};
+
+struct JSONArray : public JSONObject
+{
+    JSONArray();
+    JSONArray(Json::Value&& outro);
+    JSONArray(const Json::Value& outro);
+
+
+    JSONObject& operator =(const Json::Value& value);
+    JSONObject& operator =(Json::Value&& value);
 };
 
 
@@ -57,7 +72,9 @@ struct converter_to_json
     template<class FieldData, class Annotations>
     void operator()(FieldData f, Annotations a, int qtd)
     {
-        get( f.get(), f.name() );
+        if( ! (JsonIgnoreWrite*) Annotations::get_field(f.name()) ){
+            get( f.get(), f.name() );
+        }
     }
 
     #define IS_ULONG (std::is_same<const long, T>::value || std::is_same<const unsigned long, T>::value || std::is_same<const unsigned long long, T>::value)
@@ -158,10 +175,8 @@ struct from_json
     template<class FieldData, class Annotations>
     void operator()(FieldData f, Annotations e, int lenght)
     {
-        if( ! (JsonIgnoreWrite*) Annotations::get_field(f.name()) ){
-            auto& val = f.get();
-            get( val, f.name() );
-        }
+        auto& val = f.get();
+        get( val, f.name() );
     }
 
     template <typename T>

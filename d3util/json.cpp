@@ -92,3 +92,56 @@ void from_json::value_to_field(Json::Value v, bool &&f)
     if(v.isBool())
         f = v.asBool();
 }
+
+JSONObject::operator std::string() {
+    Json::StreamWriterBuilder builder;
+    builder["indentation"] = ""; // If you want whitespace-less output
+    const std::string output = Json::writeString(builder, *this);
+    return output;
+}
+
+JSONObject::JSONObject(const Json::Value &value): Json::Value(value){
+
+}
+
+JSONObject::JSONObject(Json::Value &&value): Json::Value(value){
+
+}
+
+JSONObject::JSONObject(Json::ValueType type) : Json::Value(type){
+
+}
+
+JSONObject &JSONObject::operator =(const Json::Value &value){
+    Json::Value::operator =(value);
+    return *this;
+}
+
+JSONObject &JSONObject::operator =(Json::Value &&value){
+    Json::Value::operator =(value);
+    return *this;
+}
+
+JSONArray::JSONArray() : JSONObject(Json::arrayValue){
+
+}
+
+JSONArray::JSONArray(Json::Value &&outro) : JSONObject(outro){
+
+}
+
+JSONArray::JSONArray(const Json::Value &outro) : JSONObject(outro){
+
+}
+
+JSONObject &JSONArray::operator =(const Json::Value &value)
+{
+    Json::Value::operator =(value);
+    return *this;
+}
+
+JSONObject &JSONArray::operator =(Json::Value &&value)
+{
+    Json::Value::operator =(value);
+    return *this;
+}
