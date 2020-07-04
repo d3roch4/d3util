@@ -11,7 +11,7 @@ add_compile_definitions(BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED=1)
 if (WIN32)
     set(STACKTRACE stacktrace_windbg)
 else()
-    set(STACKTRACE stacktrace_addr2line)
+    set(STACKTRACE stacktrace_backtrace)
 endif ()
 
 #find_package(Boost COMPONENTS system filesystem log log_setup ${STACKTRACE})

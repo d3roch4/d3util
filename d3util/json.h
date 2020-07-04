@@ -8,9 +8,15 @@
 #include <exception>
 #include <d3util/stacktrace.h>
 #include <d3util/datetime.h>
-
+#include <functional>
 
 struct JsonIgnoreWrite{};
+
+template<class T>
+struct JsonConvertWrite{
+  std::function<void(Json::Value&, const T&)> converter;
+  JsonConvertWrite(std::function<void(Json::Value&, const T&)> converter) : converter(converter){}
+};
 
 struct JSONObject : public Json::Value
 {
@@ -72,8 +78,13 @@ struct converter_to_json
     template<class FieldData, class Annotations>
     void operator()(FieldData f, Annotations a, int qtd)
     {
-        if( ! (JsonIgnoreWrite*) Annotations::get_field(f.name()) ){
-            get( f.get(), f.name() );
+        const char* name = f.name();
+        if( ! (JsonIgnoreWrite*) Annotations::get_field(name) ){
+            JsonConvertWrite<typename FieldData::type>* convWrite = Annotations::get_field(name);
+            if(convWrite)
+                convWrite->converter(json, f.get());
+            else
+                get( f.get(), name );
         }
     }
 
