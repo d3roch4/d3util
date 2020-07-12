@@ -73,7 +73,7 @@ inline Json::Value to_json(const std::string str)
 
 struct converter_to_json
 {
-    Json::Value json;
+    JSONObject json;
 
     template<class FieldData, class Annotations>
     void operator()(FieldData f, Annotations a, int qtd)
@@ -120,7 +120,7 @@ struct converter_to_json
 };
 
 template<class Entity>
-Json::Value to_json(const Entity& entity)
+JSONObject to_json(const Entity& entity)
 {
     converter_to_json cj;
     reflector::visit_each(entity, cj);
