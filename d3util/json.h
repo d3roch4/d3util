@@ -14,8 +14,18 @@ struct JsonIgnoreWrite{};
 
 template<class T>
 struct JsonConvertWrite{
-  std::function<void(Json::Value&, const T&)> converter;
-  JsonConvertWrite(std::function<void(Json::Value&, const T&)> converter) : converter(converter){}
+  std::function<void(Json::Value&, T&)> converter;
+
+  JsonConvertWrite(std::function<void(Json::Value&, T&)> converter) : converter(converter){}
+};
+
+template<class T>
+struct JsonConvertRead{
+    std::function<void(Json::Value&, T&)> converter;
+
+    JsonConvertRead(std::function<void(Json::Value&, T&)> converter)
+        : converter(converter){
+    }
 };
 
 struct JSONObject : public Json::Value
@@ -119,12 +129,22 @@ struct converter_to_json
     }
 };
 
-template<class Entity>
+template<class Entity, typename T = typename Entity::annotations>
 JSONObject to_json(const Entity& entity)
 {
     converter_to_json cj;
     reflector::visit_each(entity, cj);
     return cj.json;
+}
+
+template<typename C, typename T = typename C::value_type::annotations>
+auto to_json(const C &iterable)
+{
+    JSONArray array;
+    for(auto& itr: iterable){
+        array.append(to_json(itr));
+    }
+    return array;
 }
 
 struct from_json
@@ -187,7 +207,11 @@ struct from_json
     void operator()(FieldData f, Annotations e, int lenght)
     {
         auto& val = f.get();
-        get( val, f.name() );
+        JsonConvertRead<typename FieldData::type>* read = f.annotation();
+        if(read)
+            read->converter(*json_, val);
+        else
+            get( val, f.name() );
     }
 
     template <typename T>
