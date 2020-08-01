@@ -27,6 +27,7 @@ namespace boost {
 typedef boost::error_info<struct tag_stacktrace, boost::stacktrace::stacktrace> traced;
 
 template <class E>
+[[ noreturn ]]
 void throw_with_trace(const E& e) {
     throw boost::enable_error_info(e)
         << traced(boost::stacktrace::stacktrace());
