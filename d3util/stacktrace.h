@@ -1,7 +1,7 @@
 #ifndef STACKTRACE_H
 #define STACKTRACE_H
 
-
+#define BOOST_STACKTRACE_USE_ADDR2LINE
 #include <signal.h>     // ::signal, ::raise
 #include <stdexcept>    // std::logic_error
 #include <iostream>     // std::cerr

@@ -121,11 +121,21 @@ struct converter_to_json
     template <class T, class Dummy = void>
     auto get(T& val, const char* name) noexcept -> std::enable_if_t<!is_simple_type<T>::value 
     && !std::is_convertible<T, datetime>::value 
-    && !std::is_enum<T>::value>
+    && !std::is_enum<T>::value
+    && !is_container<T>::value>
     {
         converter_to_json tj;
         reflector::visit_each(val, tj);
         json[name] = tj.json;
+    }
+
+    template <class T, class Dummy = void>
+    auto get(T& val, const char* name) noexcept -> std::enable_if_t<is_container<T>::value && !is_simple_type<T>::value>
+    {
+        JSONArray array;
+        for(auto& v: val)
+            array.append(v);
+        json[name] = array;
     }
 };
 
@@ -149,8 +159,8 @@ auto to_json(const C &iterable)
 
 struct from_json
 {
-    Json::Value* json_;
-    bool dealoc_ = false;
+    JSONObject* json_;
+    bool dealoc_;
 
     from_json(const Json::Value& json);
     from_json(const std::string& string);
@@ -158,48 +168,55 @@ struct from_json
     
 //    template<class Field>
 //    void value_to_field(Json::Value v, Field f){}
-    void value_to_field(Json::Value v, std::string &&f);
-    void value_to_field(Json::Value v, int &&f);
-    void value_to_field(Json::Value v, long &&f);
-    void value_to_field(Json::Value v, float &&f);
-    void value_to_field(Json::Value v, double &&f);
-    void value_to_field(Json::Value v, short &&f);
-    void value_to_field(Json::Value v, long long &&f);
-    void value_to_field(Json::Value v, unsigned int &&f);
-    void value_to_field(Json::Value v, unsigned short &&f);
-    void value_to_field(Json::Value v, unsigned long &&f);
-    void value_to_field(Json::Value v, unsigned long long &&f);
-    void value_to_field(Json::Value v, datetime &&f);
-    void value_to_field(Json::Value v, bool &&f);
+    void value_to_field(Json::Value v, std::string &f);
+    void value_to_field(Json::Value v, int &f);
+    void value_to_field(Json::Value v, long &f);
+    void value_to_field(Json::Value v, float &f);
+    void value_to_field(Json::Value v, double &f);
+    void value_to_field(Json::Value v, short &f);
+    void value_to_field(Json::Value v, long long &f);
+    void value_to_field(Json::Value v, unsigned int &f);
+    void value_to_field(Json::Value v, unsigned short &f);
+    void value_to_field(Json::Value v, unsigned long &f);
+    void value_to_field(Json::Value v, unsigned long long &f);
+    void value_to_field(Json::Value v, datetime &f);
+    void value_to_field(Json::Value v, bool &f);
 
     template <class T, class Dummy = void>
-    auto get(T& val, const char* name) noexcept -> std::enable_if_t<std::is_enum<T>::value>
+    auto get(T& val, JSONObject& json) noexcept -> std::enable_if_t<std::is_enum<T>::value>
     {
-        JSONObject value = json_->get(name, Json::Value::null);
-        if(value.isIntegral())
-            val = static_cast<T>(value.asInt());
-        else if(value.isString()){
-            std::stringstream ss{value.asString()};
+        if(json.isIntegral())
+            val = static_cast<T>(json.asInt());
+        else if(json.isString()){
+            std::stringstream ss{json.asString()};
             ss >> val;
         }
     }
 
     template <class T, class Dummy = void>
-    auto get(T& val, const char* name) noexcept -> std::enable_if_t<is_simple_or_datatime_type<T>::value
-                                                            && !std::is_enum<T>::value>
+    auto get(T& var, JSONObject& json) noexcept -> std::enable_if_t<is_simple_or_datatime_type<T>::value
+                                                            && !std::is_enum<T>::value >
     {
-        JSONObject value = json_->get(name, Json::Value::null);
-        if(value != Json::Value::null)
-            value_to_field(value , std::move(val));
+        if(json != Json::Value::null)
+            value_to_field(json, var);
     }
 
     template <class T, class Dummy = void>
-    auto get(T& val, const char* name) noexcept -> std::enable_if_t<!is_simple_or_datatime_type<T>::value >
+    auto get(T& var, JSONObject& json) noexcept -> std::enable_if_t<!is_simple_or_datatime_type<T>::value && !is_container<T>::value>
     {
-        JSONObject obj = (*json_)[name];
-        if(obj.isObject()){
-            from_json fj(obj);
-            reflector::visit_each(val, fj);
+        if(json.isObject()){
+            from_json fj(json);
+            reflector::visit_each(var, fj);
+        }
+    }
+
+    template <class T, class Dummy = void>
+    auto get(T& var, JSONObject& json) noexcept -> std::enable_if_t<is_container<T>::value && !std::is_same<T, std::string>::value>
+    {        
+        for(JSONObject&& j: json){
+            typename T::value_type d;
+            get(d, j);
+            var.emplace_back(d);
         }
     }
 
@@ -210,8 +227,11 @@ struct from_json
         JsonConvertRead<typename FieldData::type>* read = f.annotation();
         if(read)
             read->converter(*json_, val);
-        else
-            get( val, f.name() );
+        else{
+            JSONObject value = json_->get(f.name(), Json::Value::null);
+            if(value != Json::Value::null)
+                get(val, value);
+        }
     }
 
     template <typename T>
