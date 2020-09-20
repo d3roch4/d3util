@@ -8,11 +8,6 @@ file(GLOB HPP_FILES d3util/*.h)
 
 set(Boost_USE_STATIC_LIBS ON)
 add_compile_definitions(BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED=1)
-if (WIN32)
-    set(STACKTRACE stacktrace_windbg)
-else()
-    set(STACKTRACE stacktrace_addr2line)
-endif ()
 
 find_package(Boost COMPONENTS system filesystem log log_setup ${STACKTRACE})
 if(NOT Boost_FOUND)
@@ -25,7 +20,7 @@ include_directories(src)
 
 add_library(${PROJECT_NAME} ${CPP_FILES} ${HPP_FILES}) 
 target_include_directories(${PROJECT_NAME} PUBLIC ./)
-target_link_libraries(${PROJECT_NAME} PUBLIC Boost::system Boost::filesystem Boost::${STACKTRACE} Boost::log Boost::log_setup)
+target_link_libraries(${PROJECT_NAME} PUBLIC Boost::system Boost::filesystem Boost::log Boost::log_setup)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION lib)
 install(FILES ${HPP_FILES} DESTINATION include/${PROJECT_NAME})
