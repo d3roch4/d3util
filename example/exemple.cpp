@@ -1,7 +1,7 @@
 #include <iostream>
 #include <d3util/json.h>
+#include <mor/mor.h>
 using namespace std;
-
 
 struct print_person
 {
@@ -16,18 +16,18 @@ struct print_person
     {
         std::cout << std::endl << f.name() << "=" << to_string(f.get()) ;
     }*/
-    
+
     template<class FieldData, class Annotations>
     void operator()(FieldData f, Annotations a, int qtd)
     {
-        std::cout << std::endl << f.name() << "=" << f.get() ;
+        const char* name = f.name();
+        std::cout << std::endl << f.name();// << "=" << f.get() ;
     }
 };
 
 class Person
 {
 public:
-
     enum Status {
         unknow,
         online,
@@ -51,6 +51,20 @@ REFLECTABLE(
 };
 ANNOTATIONS_ENTITY(Person) = {Entity("person")};
 
+string to_string(Person::Status status){
+    switch (status) {
+        case Person::online: return "online";
+        case Person::offline: return "offline";
+        default: return "Unknow";
+    }
+}
+istream& operator>>(istream& stream, Person::Status& status){
+    int i;
+    stream >> i;
+    status = static_cast<Person::Status>(i);
+    return stream;
+}
+
 int main()
 {    
     Person p("Tom Petter", 82, "Rua de cima");
@@ -58,8 +72,8 @@ int main()
     p.status = Person::Status::offline;
 
     Json::Value json = to_json<Person>(p);
-    //Person copy = from_json(json);
+//    Person copy = from_json(json);
     
     print_person pp{};
-    reflector::visit_each(copy, pp);
+//    reflector::visit_each(copy, pp);
 }
