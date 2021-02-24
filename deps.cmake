@@ -14,10 +14,6 @@ FetchContent_GetProperties(jsoncpp)
 FetchContent_Populate(jsoncpp)
 add_subdirectory(${jsoncpp_SOURCE_DIR} ${jsoncpp_BINARY_DIR} EXCLUDE_FROM_ALL)
 
-if(NOT TARGET mor)
-    add_subdirectory(deps/mor mor)
-endif()
-
 find_package(Boost COMPONENTS system filesystem log log_setup stacktrace)
 if(NOT Boost_FOUND)
     FetchContent_Declare (boost-cmake
