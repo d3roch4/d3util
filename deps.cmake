@@ -14,12 +14,4 @@ FetchContent_GetProperties(jsoncpp)
 FetchContent_Populate(jsoncpp)
 add_subdirectory(${jsoncpp_SOURCE_DIR} ${jsoncpp_BINARY_DIR} EXCLUDE_FROM_ALL)
 
-set(BOOST_INCLUDE_LIBRARIES system filesystem log log_setup stacktrace)
-set(BOOST_ENABLE_CMAKE ON)
-FetchContent_Declare(
-  Boost
-  GIT_REPOSITORY https://github.com/boostorg/boost.git
-  GIT_TAG boost-1.80.0
-)
-FetchContent_MakeAvailable(Boost)
-
+find_package(Boost COMPONENTS system filesystem log log_setup stacktrace)
