@@ -8,13 +8,15 @@ file(GLOB HPP_FILES d3util/*.h)
 
 set(Boost_USE_STATIC_LIBS ON)
 add_compile_definitions(BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED=1)
+find_package(Boost COMPONENTS system filesystem log log_setup stacktrace )
+
 include(deps.cmake)
 include_directories(src)
 
 add_library(${PROJECT_NAME} STATIC ${CPP_FILES} ${HPP_FILES})
 target_include_directories(${PROJECT_NAME} PUBLIC ./)
 target_link_libraries(${PROJECT_NAME} PUBLIC Boost::system Boost::filesystem
-    Boost::log Boost::log_setup Boost::stacktrace_addr2line mor jsoncpp_static
+    Boost::log Boost::log_setup mor jsoncpp_static
 )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION lib)

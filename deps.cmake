@@ -14,4 +14,3 @@ FetchContent_GetProperties(jsoncpp)
 FetchContent_Populate(jsoncpp)
 add_subdirectory(${jsoncpp_SOURCE_DIR} ${jsoncpp_BINARY_DIR} EXCLUDE_FROM_ALL)
 
-find_package(Boost COMPONENTS system filesystem log log_setup stacktrace)
