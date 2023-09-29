@@ -1,5 +1,6 @@
 #include <d3util/stacktrace.h>
 #include <boost/filesystem.hpp>
+#include <fstream>
 #define BOOST_STACKTRACE_USE_ADDR2LINE
 #define BOOST_STACKTRACE_LINK
 
