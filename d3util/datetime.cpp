@@ -25,7 +25,7 @@ datetime stodt(const std::string &dtstr, const char *format)
 std::istream &operator >>(std::istream &strean, datetime &dt)
 {
     struct std::tm tm{};
-    strean.imbue(std::locale("pt_BR.utf-8"));
+    strean.imbue(std::locale(""));
     strean >> std::get_time(&tm, "%Y-%m-%d %H:%M:%S"); // or just %T in this case
     std::time_t time = mktime(&tm);
     dt = std::chrono::system_clock::from_time_t(time);
